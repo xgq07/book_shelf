@@ -12,8 +12,7 @@ class Comment extends BaseController
 
     public function write(Request $request)
     {
-        $code = $request->param('bkid');
-        $data = [
+        $requestData = [
             'skey' => $request->param('skey')  ,
             'content' =>$request->param('content')   ,
             'bookid' => $request->param('bookid') ,
@@ -23,13 +22,18 @@ class Comment extends BaseController
             'content' => 'require',
             'bookid' => 'require',
         ]);
-        if (!$validate->check($data))
+        if (!$validate->check($requestData))
             return retJson(1, $validate->getError());
+
+        $app = getWxMiniProgramFactory();
+        $result = $app->content_security->checkText($requestData['content']);
+        if (!isset($result["errcode"]) || $result["errcode"] != 0)
+            return retJson(Config('statuscode.FAIL'),'评论中含有敏感词，请重新评论！',[]);
 
         $sql = 'insert into comment (uid,uname,uavatar,bkid,bkname,ccontent)' .
                'select uid,uname,uavatar,?,(select bkname from books where bkid=?),? from users where users.skey=?';
 
-        Db::execute($sql,[$data['bookid'],$data['bookid'],$data['content'],$data['skey']]);
+        Db::execute($sql,[$requestData['bookid'],$requestData['bookid'],$requestData['content'],$requestData['skey']]);
         return retJson(Config('statusCode.SUCCESS'),'OK',[]);
     }
 }
