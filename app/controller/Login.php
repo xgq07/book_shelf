@@ -3,10 +3,8 @@ namespace app\controller;
 
 use app\BaseController;
 
-use EasyWeChat\Factory;
 use app\Request;
 use app\model\Users;
-use think\db\Where;
 use think\facade\Log;
 use think\facade\Validate;
 class Login extends BaseController
