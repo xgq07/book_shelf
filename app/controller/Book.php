@@ -57,7 +57,7 @@ class Book extends BaseController
 
 
         //
-        $count = Orders::hasWhere('Users', ['skey'=>$data['skey'], 'bkid' => $data['bookid']])->select()->count();
+        $count = Orders::hasWhere('Users', ['skey'=>$data['skey'], 'orders.bkid'=>$data['bookid']])->select()->count();
         $retData['is_buy'] = $count == 0 ? 0 : 1;
         //
         $retData['lists'] = Comment::where('bkid', $data['bookid'])->select()->toArray();
