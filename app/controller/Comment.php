@@ -6,7 +6,7 @@ use app\model\Comment as CommentModel;
 use app\Request;
 use think\facade\Validate;
 use think\facade\Db;
-
+use think\facade\Log;
 class Comment extends BaseController
 {
 
@@ -29,7 +29,8 @@ class Comment extends BaseController
         $result = $app->content_security->checkText($requestData['content']);
         if (!isset($result["errcode"]) || $result["errcode"] != 0)
             return retJson(Config('statuscode.FAIL'),'评论中含有敏感词，请重新评论！',[]);
-
+        Log::info("comment result:");
+        Log::info($result);
         $sql = 'insert into comment (uid,uname,uavatar,bkid,bkname,ccontent)' .
                'select uid,uname,uavatar,?,(select bkname from books where bkid=?),? from users where users.skey=?';
 
