@@ -39,7 +39,7 @@ class Order extends BaseController
         $bkPrice = $book->bkprice;
 
         //用户是否已经购买过书籍
-        $orderCount = Orders::where('bookid', '=',  $reqParams['bookid'])->
+        $orderCount = Orders::where('bkid', '=',  $reqParams['bookid'])->
                               where('uid', '=', $uid)->
                               count();
         if ($orderCount > 0)
