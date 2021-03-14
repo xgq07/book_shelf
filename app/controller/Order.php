@@ -45,7 +45,6 @@ class Order extends BaseController
         if ($orderCount > 0)
             return retJson(Config('statuscode.FAIL'),'您已经兑换过此书籍了呀', []);
 
-        dump($balance, $bkPrice);
         //写入订单
         $order = new Orders();
         $order->uid = $uid;
