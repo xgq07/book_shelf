@@ -25,6 +25,7 @@ class Order extends BaseController
         if (!$validate->check($reqParams))
             return retJson(Config('statusCode.FAIL'), $validate->getError());
 
+
         //根据skey查询用户积分, 查出书籍所需购买积分
         $user = Users::where('skey', $reqParams['skey'])->findOrEmpty();
         if ($user->isEmpty())
@@ -36,6 +37,12 @@ class Order extends BaseController
         if ($book->isEmpty())
             return retJson(Config('statusCode.FAIL'),'找不到书籍信息', []);
         $bkPrice = $book->bkprice;
+
+        //用户是否已经购买过书籍
+        $orderCount = Orders::where('bookid', '=',  $reqParams['bookid'])->
+                              where('uid', '=', $reqParams['uid'])->count();
+        if ($orderCount > 0)
+            return retJson(Config('statusCode.FAIL'),'您已经兑换过此书籍', []);
 
         dump($balance, $bkPrice);
         //写入订单
@@ -54,6 +61,6 @@ class Order extends BaseController
         $retData = [
             'balance' =>$balance
         ];
-        return retJson(Config('statusCode.SUCCESS'), 'ok', []);
+        return retJson(Config('statusCode.SUCCESS'), 'ok', $retData);
     }
 }
