@@ -23,19 +23,19 @@ class Order extends BaseController
             'bookid' => 'require',
         ]);
         if (!$validate->check($reqParams))
-            return retJson(Config('statusCode.FAIL'), $validate->getError());
+            return retJson(Config('statuscode.FAIL'), $validate->getError());
 
 
         //根据skey查询用户积分, 查出书籍所需购买积分
         $user = Users::where('skey', $reqParams['skey'])->findOrEmpty();
         if ($user->isEmpty())
-            return retJson(Config('statusCode.FAIL'),'查找不到此用户信息', []);
+            return retJson(Config('statuscode.FAIL'),'查找不到此用户信息', []);
         $balance = $user->ubalance;
         $uid = $user->uid;
 
         $book = Books::find($reqParams['bookid']);
         if ($book->isEmpty())
-            return retJson(Config('statusCode.FAIL'),'找不到书籍信息', []);
+            return retJson(Config('statuscode.FAIL'),'找不到书籍信息', []);
         $bkPrice = $book->bkprice;
 
         //用户是否已经购买过书籍
@@ -43,7 +43,7 @@ class Order extends BaseController
                               where('uid', '=', $uid)->
                               count();
         if ($orderCount > 0)
-            return retJson(Config('statusCode.FAIL'),'您已经兑换过此书籍了呀', []);
+            return retJson(Config('statuscode.FAIL'),'您已经兑换过此书籍了呀', []);
 
         dump($balance, $bkPrice);
         //写入订单
@@ -54,7 +54,7 @@ class Order extends BaseController
         $order->save();
         //扣除积分
         if ($balance < $bkPrice)
-            return retJson(Config('statusCode.FAIL'),'余额不足，无法兑换', []);
+            return retJson(Config('statuscode.FAIL'),'余额不足，无法兑换', []);
         $balance = $balance - $bkPrice;
         $user->ubalance = $balance;
         $user->save();
@@ -62,6 +62,7 @@ class Order extends BaseController
         $retData = [
             'balance' =>$balance
         ];
-        return retJson(Config('statusCode.SUCCESS'), 'ok', $retData);
+        //返回评论
+        return retJson(Config('statuscode.SUCCESS'), 'ok', $retData);
     }
 }

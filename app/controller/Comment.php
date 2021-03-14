@@ -35,6 +35,6 @@ class Comment extends BaseController
                'select uid,uname,uavatar,?,(select bkname from books where bkid=?),? from users where users.skey=?';
 
         Db::execute($sql,[$requestData['bookid'],$requestData['bookid'],$requestData['content'],$requestData['skey']]);
-        return retJson(Config('statusCode.SUCCESS'),'OK',[]);
+        return retJson(Config('statuscode.SUCCESS'),'OK',[]);
     }
 }
