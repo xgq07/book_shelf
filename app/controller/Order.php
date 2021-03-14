@@ -40,7 +40,8 @@ class Order extends BaseController
 
         //用户是否已经购买过书籍
         $orderCount = Orders::where('bookid', '=',  $reqParams['bookid'])->
-                              where('uid', '=', $reqParams['uid'])->count();
+                              where('uid', '=', $uid)->
+                              count();
         if ($orderCount > 0)
             return retJson(Config('statusCode.FAIL'),'您已经兑换过此书籍', []);
 
